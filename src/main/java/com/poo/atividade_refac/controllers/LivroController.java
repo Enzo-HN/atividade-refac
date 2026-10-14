@@ -1,6 +1,6 @@
 package com.poo.atividade_refac.controllers;
 
-import com.poo.atividade_refac.contracts.ILivrosServiceOperations;
+import com.poo.atividade_refac.contracts.*;
 import com.poo.atividade_refac.entities.Livro;
 import com.poo.atividade_refac.services.LivrosService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,10 @@ public class LivroController {
     public LivroController(ILivrosServiceOperations livrosService) {
         this.livrosService = livrosService;
     }
-
+    public ILivroMailer emailService;
+    public ILivroReportGenerator  relatorioService;
+    public ILivroErpSyncher ErpService;
+    public ILivroLabelGenerator etiquetaService;
 
     @GetMapping
     public List<Livro> listarLivros() {
@@ -36,6 +39,26 @@ public class LivroController {
     @DeleteMapping("/{id}")
     public void deletarLivro(@PathVariable Long id) {
         livrosService.deletarLivros(id);
+    }
+
+    public void gerarRelatorio() {
+        relatorioService.gerarRelatorio();
+    }
+
+    public void exportarPdf() {
+       relatorioService.exportarPdf();
+    }
+
+    public void enviarEmailPromocional() {
+        emailService.enviarEmailPromocional();
+    }
+
+    public void sincronizarComERP() {
+        ErpService.sincronizarComERP();
+    }
+
+    public void gerarEtiqueta() {
+        etiquetaService.gerarEtiqueta();
     }
 }
 
