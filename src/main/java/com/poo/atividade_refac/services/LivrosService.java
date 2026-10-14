@@ -1,6 +1,7 @@
 package com.poo.atividade_refac.services;
 
 import com.poo.atividade_refac.contracts.ILivrosServiceOperations;
+import com.poo.atividade_refac.discounts.DiscountCalculator;
 import com.poo.atividade_refac.entities.Livro;
 import com.poo.atividade_refac.repositories.IJPALivroRepo;
 import com.poo.atividade_refac.validations.LivrosValidation;
@@ -17,6 +18,8 @@ public class LivrosService implements ILivrosServiceOperations {
     private IJPALivroRepo livroRepo;
     @Autowired
     private LivrosValidation validarLivro;
+    @Autowired
+    private DiscountCalculator calculadoraDesconto;
 
     @Override
     public List<Livro> listarLivros() {
@@ -26,22 +29,20 @@ public class LivrosService implements ILivrosServiceOperations {
     @Override
     public Livro cadastrarLivros(Livro livro){
         validarLivro.validar(livro);
+        livro.setPreco(calculadoraDesconto.aplicar(livro));
         livroRepo.save(livro);
         return livro;
 
     }
     @Override
-    public Livro atualizarLivros(Long id, Livro livro){
+    public Livro atualizarLivros(Long id, Livro livro) {
         validarLivro.validar(livro);
-        Optional<Livro> livroAtualizado = livroRepo.findById(id);
-        if(livroAtualizado.isPresent()){
-            livroAtualizado.get().setTitulo(livro.getTitulo());
-            livroAtualizado.get().setAutor(livro.getAutor());
-            livroAtualizado.get().setPreco(livro.getPreco());
-            livroAtualizado.get().setCategoria(livro.getCategoria());
-            livroRepo.save(livroAtualizado.get());
-        }
-        return livroAtualizado.get();
+        Livro existente = livroRepo.findById(id).orElseThrow();
+        existente.setTitulo(livro.getTitulo());
+        existente.setAutor(livro.getAutor());
+        existente.setPreco(livro.getPreco());
+        existente.setCategoria(livro.getCategoria());
+        return livroRepo.save(existente);
     }
     @Override
     public void deletarLivros(Long id){

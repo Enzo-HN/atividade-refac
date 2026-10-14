@@ -9,7 +9,7 @@ public class LivrosValidation {
         if (livro.getTitulo() == null || livro.getTitulo().isBlank()) {
             throw new IllegalArgumentException("Título obrigatório");
         }
-        if (livro.getPreco() <= 0) {
+        if (livro.getPreco() == null || livro.getPreco() <= 0) {
             throw new IllegalArgumentException("Preço inválido");
         }
     }
